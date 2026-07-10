@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: devops-cyber-assessment
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: oh-no!
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: devops-cyber-assessment
+      DB_USER: postgres
+      DB_PASSWORD: oh-no!
+    depends_on:
+      - db
