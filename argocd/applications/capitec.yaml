@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: capitec
+  namespace: argocd
+
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+
+spec:
+  project: default
+
+  source:
+    repoURL: git@github.com:infrabyte/capitec.git
+    targetRevision: main
+    path: helm/devops-cyber-assessment
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: capitec
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true

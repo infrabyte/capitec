@@ -1,0 +1,32 @@
+grafana:
+  adminUser: admin
+  adminPassword: admin
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.jumphost
+    path: /
+    pathType: Prefix
+
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.jumphost
+    path: /
+    pathType: Prefix
+
+  prometheusSpec:
+    retention: 7d
+    scrapeInterval: 30s
+
+alertmanager:
+  enabled: true
+
+kube-state-metrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
