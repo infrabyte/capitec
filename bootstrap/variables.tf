@@ -13,13 +13,7 @@
 variable "github_repository" {
   description = "Git repository containing the Argo CD manifests"
   type        = string
-  default     = "ssh://git@github.com/infrabyte/capitec.git"
-}
-
-variable "github_private_key" {
-  description = "SSH private key used by Argo CD to access the Git repository"
-  type        = string
-  sensitive   = true
+  default     = "git@github.com/infrabyte/capitec.git"
 }
 
 variable "argocd_namespace" {
@@ -32,4 +26,9 @@ variable "argocd_chart_version" {
   description = "Version of the Argo CD Helm chart"
   type        = string
   default     = "8.2.7"
+}
+
+variable "github_private_key_file" {
+  description = "Path to the GitHub deploy key"
+  type        = string
 }

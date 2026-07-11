@@ -1,13 +1,4 @@
 # GitHub Repository Secret
-
-# variable "github_repository" {
-#   default = "git@github.com:infrabyte/capitec.git"
-# }
-
-# variable "github_private_key" {
-#   sensitive = true
-# }
-
 resource "kubernetes_secret" "argocd_repository" {
   depends_on = [
     helm_release.argocd
@@ -26,6 +17,6 @@ resource "kubernetes_secret" "argocd_repository" {
   data = {
     type          = "git"
     url           = var.github_repository
-    sshPrivateKey = var.github_private_key
+    sshPrivateKey = trimspace(file(var.github_private_key_file))
   }
 }

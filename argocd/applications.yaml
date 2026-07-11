@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: ssh://git@github.com/infrabyte/capitec.git
+    repoURL: git@github.com/infrabyte/capitec.git
     targetRevision: main
     path: argocd
 
