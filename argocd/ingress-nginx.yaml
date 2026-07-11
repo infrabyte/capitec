@@ -22,13 +22,10 @@ spec:
       values: |
         controller:
           service:
-            type: NodePort
-
-          hostPort:
-            enabled: true
+            type: LoadBalancer
 
           publishService:
-            enabled: false
+            enabled: true
 
   destination:
     server: https://kubernetes.default.svc
