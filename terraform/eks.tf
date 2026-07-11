@@ -13,11 +13,14 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.37"
 
-  cluster_name                    = "${var.project_name}-eks"
-  cluster_version                 = "1.36"
+  cluster_name    = "${var.project_name}-eks"
+  cluster_version = "1.36"
+
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
+
   enable_cluster_creator_admin_permissions = true
+  enable_irsa = true
 
   cluster_enabled_log_types = [
     "api",
@@ -30,7 +33,25 @@ module "eks" {
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnets.default.ids
 
-  enable_irsa = true
+  cluster_addons = {
+    coredns = {
+      most_recent = true
+    }
+
+    kube-proxy = {
+      most_recent = true
+    }
+
+    vpc-cni = {
+      most_recent = true
+    }
+
+    aws-ebs-csi-driver = {
+      most_recent = true
+
+      service_account_role_arn = module.ebs_csi_irsa.iam_role_arn
+    }
+  }
 
   eks_managed_node_groups = {
     default = {
