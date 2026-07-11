@@ -1,16 +1,19 @@
-replicaCount: 1
-
 image:
-  repository: CHANGE_ME_ECR_REPO_URL
-  tag: "latest"
+  repository: postgres
+  tag: "16"
   pullPolicy: IfNotPresent
 
-service:
-  port: 5000
+postgresql:
+  database: devops-cyber-assessment
+  username: postgres
+  password: oh-no!
 
-env:
-  DB_HOST: "devops-cyber-assessment-db"
-  DB_PORT: "5432"
-  DB_NAME: "devops-cyber-assessment"
-  DB_USER: "postgres"
-  DB_PASSWORD: "oh-no!"
+service:
+  type: ClusterIP
+  port: 5432
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi

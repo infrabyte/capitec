@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-devops-cyber-assessment
+  name: postgresql
 spec:
+  type: {{ .Values.service.type }}
   selector:
-    app: devops-cyber-assessment
+    app: postgresql
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.port }}
-  type: ClusterIP
+      targetPort: 5432
+      protocol: TCP
