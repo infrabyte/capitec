@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: capitec-repository
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+
+type: Opaque
+
+stringData:
+  type: git
+  url: git@github.com:infrabyte/capitec.git
+  sshPrivateKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACDQ3s7psbxynUL4MxOQik5ZSUHlVvkj/5dkH4qv0jyTuQAAAJgFPvnPBT75
+    zwAAAAtzc2gtZWQyNTUxOQAAACDQ3s7psbxynUL4MxOQik5ZSUHlVvkj/5dkH4qv0jyTuQ
+    AAAEASCuBKdejuwHjoYZ3nuE9lCYvFMN14bInDhlpKT0b6cdDezumxvHKdQvgzE5CKTllJ
+    QeVW+SP/l2Qfiq/SPJO5AAAADmFyZ29jZEBjYXBpdGVjAQIDBAUGBw==
+    -----END OPENSSH PRIVATE KEY-----

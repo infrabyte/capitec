@@ -1,0 +1,76 @@
+#################### My findings #########################
+# Contains multiple deliberate security vulnerabilities 
+# Resource        Issue
+# ECR           	Mutable image tags (MUTABLE)
+# S3 Bucket       Public access explicitly allowed
+# S3 Policy       Principal = "*" grants public read
+# IAM Policy      Action = "*" and Resource = "*" (Administrator privileges)
+# IAM Access Key  Long-lived access key created
+# S3 Bucket       No encryption
+# S3 Bucket	      No versioning
+# S3 Bucket       No access logging
+# ECR             No image scanning enabled
+# IAM             Inline policy instead of least-privilege managed policy
+#
+###########################################################
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_ecr_repository" "app" {
+  name                 = var.project_name
+  image_tag_mutability = "MUTABLE"
+}
+
+# Bucket for build artifacts / DB backups
+resource "aws_s3_bucket" "artifacts" {
+  bucket = "${var.project_name}-artifacts-${data.aws_caller_identity.current.account_id}"
+}
+
+resource "aws_s3_bucket_public_access_block" "artifacts" {
+  bucket = aws_s3_bucket.artifacts.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "artifacts" {
+  bucket = aws_s3_bucket.artifacts.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicRead"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.artifacts.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_user" "ci_deploy" {
+  name = "${var.project_name}-ci-deploy"
+}
+
+resource "aws_iam_user_policy" "ci_deploy" {
+  name = "${var.project_name}-ci-deploy-policy"
+  user = aws_iam_user.ci_deploy.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "*"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_access_key" "ci_deploy" {
+  user = aws_iam_user.ci_deploy.name
+}

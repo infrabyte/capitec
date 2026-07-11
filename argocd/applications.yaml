@@ -7,9 +7,9 @@ spec:
   project: default
 
   source:
-    repoURL: git@github.com:infrabyte/capitec.git
+    repoURL: ssh://git@github.com/infrabyte/capitec.git
     targetRevision: main
-    path: argocd/applications
+    path: argocd
 
   destination:
     server: https://kubernetes.default.svc
@@ -19,6 +19,8 @@ spec:
     automated:
       prune: true
       selfHeal: true
+      allowEmpty: false
 
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true

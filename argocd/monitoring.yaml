@@ -5,27 +5,26 @@ metadata:
   name: monitoring
   namespace: argocd
 
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+
 spec:
   project: default
 
-  source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: 76.2.1
+  sources:
 
-    helm:
-      releaseName: monitoring
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: kube-prometheus-stack
+      targetRevision: 76.2.1
 
-      values: |
-        grafana:
-          adminPassword: admin
+      helm:
+        releaseName: monitoring
+        valueFiles:
+          - $values/argocd/values/monitoring-values.yaml
 
-        prometheus:
-          prometheusSpec:
-            retention: 7d
-
-        alertmanager:
-          enabled: true
+    - repoURL: git@github.com:infrabyte/capitec.git
+      targetRevision: main
+      ref: values
 
   destination:
     server: https://kubernetes.default.svc
