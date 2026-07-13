@@ -78,27 +78,54 @@ The objective was to demonstrate modern cloud-native engineering practices inclu
 # Repository Structure
 
 ```
-terraform/
-    argocd.tf
-    repository.tf
-    variables.tf
-    outputs.tf
-
-argocd/
-    applications/
-        capitec.yaml
-        ingress-nginx.yaml
-        monitoring.yaml
-        postgresql.yaml
-
-    bootstrap/
-        applications.yaml
-
-    values/
-        argocd-values.yaml
-        monitoring-values.yaml
-
-    argocd-ingress.yaml
+.
+├── app
+│   ├── main.py
+│   ├── requirements.txt
+│   └── venv
+├── argocd
+│   ├── applications.yaml
+│   ├── argocd-ingress.yaml
+│   ├── capitec-ingress.yaml
+│   ├── capitec.yaml
+│   ├── ingress-nginx.yaml
+│   ├── kustomization.yaml
+│   ├── monitoring.yaml
+│   ├── postgresql.yaml
+│   └── values
+├── bootstrap
+│   ├── application.tf
+│   ├── argocd.tf
+│   ├── outputs.tf
+│   ├── providers.tf
+│   ├── repository.tf
+│   ├── repository.yaml.bak
+│   ├── terraform.tfstate
+│   ├── terraform.tfstate.backup
+│   ├── terraform.tfvars
+│   ├── variables.tf
+│   └── versions.tf
+├── Build.md
+├── db
+│   └── init.sql
+├── docker-compose.yml
+├── Dockerfile
+├── helm
+│   ├── devops-cyber-assessment
+│   └── postgresql
+├── README.md
+├── REQUEST.md
+├── terraform
+│   ├── ebs-csi.tf
+│   ├── eks.tf
+│   ├── main.tf
+│   ├── main.tf.bad
+│   ├── outputs.tf
+│   ├── terraform.tfstate
+│   ├── terraform.tfstate.backup
+│   ├── tfplan
+│   ├── variables.tf
+│   └── versions.tf
 ```
 
 ---
@@ -135,7 +162,7 @@ which contains
 - Monitoring
 - Capitec Application
 
-Any Git commit automatically synchronizes to Kubernetes.
+Any Git commit automatically synchronizes to Kubernetes (Unless a sync window is in place).
 
 ---
 
@@ -144,13 +171,7 @@ Any Git commit automatically synchronizes to Kubernetes.
 Application images are stored in
 
 ```
-GitHub Container Registry
-```
-
-Example
-
-```
-ghcr.io/infrabyte/capitec:latest
+GitHub Container Registry: ghcr.io/infrabyte/capitec:latest
 ```
 
 ---
@@ -161,8 +182,8 @@ NGINX Ingress Controller exposes
 
 ```
 argocd.jumphost
-grafana.jumphost
-prometheus.jumphost
+grafana.jumphost (Scaled to preserve resources)
+prometheus.jumphost (Scaled to preserve resources)
 ```
 
 through a single AWS Load Balancer.
@@ -172,41 +193,23 @@ through a single AWS Load Balancer.
 # GitOps Workflow
 
 Developer
-
 ↓
-
 Push code
-
 ↓
-
 GitHub
-
 ↓
-
 Container Image built
-
 ↓
-
 GHCR
-
 ↓
-
 Update Helm values
-
 ↓
-
 Git Commit
-
 ↓
-
 ArgoCD detects change
-
 ↓
-
-Deploy automatically
-
+Deploy automatically (Unless a sync window is in place)
 ↓
-
 Kubernetes
 
 ---
@@ -217,95 +220,83 @@ During implementation several security issues were identified and corrected.
 
 ---
 
-## 1. Git Repository Authentication
+## 1. ECR - 
 
 ### Issue
 
-ArgoCD could not authenticate to GitHub.
+Mutable tags.
 
-Initial errors included
-
-```
-SSH_AUTH_SOCK not specified
-```
-
-followed by
+### Risk
 
 ```
-Permission denied (publickey)
+Images can be overwritten
 ```
-
-Investigation showed
-
-- incorrect private key
-- Windows CRLF line endings inside Terraform variables
-- invalid repository URL
 
 ### Resolution
 
-- Generated dedicated deployment key
-- Added Deploy Key to GitHub
-- Stored private key as Kubernetes Secret
-- Switched Terraform to load the key directly from file
-- Removed Windows CRLF characters
+Make tags immutable
 
 ---
 
-## 2. Private Key Storage
+## 2. S3
 
-### Initial implementation
+### Issue(s)
 
-Private key embedded directly inside
+- Public Access Block disabled
+- Public bucket policy
+- No encryption
+- No versioning
 
-```
-terraform.tfvars
-```
-
-Problems
-
-- difficult to manage
-- Windows line endings corrupted the key
-- sensitive information stored directly in configuration
-
-### Improved implementation
-
-Terraform now loads
+### Risk
 
 ```
-~/.ssh/capitec_argocd
+- Bucket can become public
+- Anyone on the Internet can read objects
+- Data at rest not encrypted
+- Accidental deletion/data loss
 ```
 
-using
+### Resolution
 
 ```
-file(...)
+- Enable all public access blocks
+- Remove public policy
+- Enable SSE (AES256 or KMS)
+- Enable versioning
 ```
-
-Advantages
-
-- easier rotation
-- no formatting issues
-- avoids storing private keys inside Terraform source
 
 ---
 
-## 3. Principle of Least Privilege
+## 3. IAM
 
-Repository access is restricted using
+### Issue(s)
 
-GitHub Deploy Keys
+- Long-lived IAM user
+- Access key
+- Action="*"
+- Resource="*"
 
-instead of Personal Access Tokens.
+### Risk
 
-Deploy Keys provide
+```
+- Static credentials
+- Permanent credentials
+- Full administrator access
+- Access to everything
+```
 
-- repository-specific access
-- read-only permissions
-- no user credentials stored
+### Resolution
+
+```
+- Prefer IAM Roles/OIDC
+- Avoid where possible
+- Principle of Least Privilege
+- Scope resources
+```
 
 ---
 
-## 4. GitOps
+## 4. General
 
 Infrastructure changes occur only through Git.
 
@@ -367,45 +358,20 @@ Advantages
 
 # Challenges Encountered
 
-Several issues were encountered during deployment.
+### Issue
+No tagging
+
+### Risk
+Poor governance
+
+### Resolution
+Add standard tags
 
 ## CRD Timing
 
 Terraform attempted to create the Root Application before ArgoCD CRDs existed.
 
 Resolved by waiting for ArgoCD installation before applying the Root Application.
-
----
-
-## Repository Authentication
-
-Incorrect SSH key and Windows CRLF formatting caused repeated authentication failures.
-
-Resolved through
-
-- dedicated Deploy Key
-- Linux formatted key file
-- repository secret recreation
-
----
-
-## ArgoCD Sync
-
-Root Application remained
-
-```
-Unknown
-```
-
-until repository authentication succeeded.
-
----
-
-## Ingress
-
-NGINX backend protocol initially mismatched ArgoCD server configuration resulting in HTTP 502 responses.
-
-The ingress configuration was updated to match the server configuration.
 
 ---
 
@@ -473,10 +439,12 @@ The completed platform demonstrates
 
 The resulting environment is fully reproducible, declarative, and managed through Git, following modern Platform Engineering and DevOps best practices.
 
+---
 
-Retrieve ArgoCD password with
+# Admin Notes
+
+Retrieve ArgoCD password with:
+```
 kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath="{.data.password}" | base64 -d && echo
-
-ArgoCD Pass:
-RQfr9XaX5op0TzlW
+```
