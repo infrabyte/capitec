@@ -440,26 +440,43 @@ sudo apt install -y \
     openssh-client
 ```
 Install Docker
+
 Install kubectl
+
 Install Helm
+
 Configure Git
+
 Create SSH Key
+
 Add SSH Key to GitHub
+
 Create GitHub PAT
 
 To deploy via Terraform
+
 EKS:
+
 Goto ./terraform directory
+
 terraform init
+
 terraform validate
+
 terraform plan
+
 terraform apply
 
 ArgoCD:
+
 Goto ./bootstrap directory
+
 terraform init
+
 terraform validate
+
 terraform plan
+
 terraform apply
 
 Github Code:
