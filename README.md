@@ -442,23 +442,23 @@ sudo apt install -y \
 Install Docker, kubectl, Helm, Configure Git, Create SSH Key, Add SSH Key to GitHub, Create GitHub PAT, To deploy via Terraform
 
 EKS:
+
 Goto ./terraform directory
+```
 terraform init
 terraform validate
 terraform plan
 terraform apply
-
+```
 ArgoCD:
 
 Goto ./bootstrap directory
-
+```
 terraform init
-
 terraform validate
-
 terraform plan
-
 terraform apply
+```
 
 Github Code:
 https://github.com/infrabyte/capitec
