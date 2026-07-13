@@ -421,6 +421,47 @@ The resulting environment is fully reproducible, declarative, and managed throug
 
 # Admin Notes
 
+Base Packages (Completed on local Ubuntu 24.04 VM)
+```
+sudo apt update
+
+sudo apt install -y \
+    git \
+    curl \
+    wget \
+    unzip \
+    jq \
+    ca-certificates \
+    apt-transport-https \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    build-essential \
+    openssh-client
+```
+Install Docker
+Install kubectl
+Install Helm
+Configure Git
+Create SSH Key
+Add SSH Key to GitHub
+Create GitHub PAT
+
+To deploy via Terraform
+EKS:
+Goto ./terraform directory
+terraform init
+terraform validate
+terraform plan
+terraform apply
+
+ArgoCD:
+Goto ./bootstrap directory
+terraform init
+terraform validate
+terraform plan
+terraform apply
+
 Github Code:
 https://github.com/infrabyte/capitec
 
