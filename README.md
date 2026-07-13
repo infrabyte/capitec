@@ -191,27 +191,9 @@ through a single AWS Load Balancer.
 ---
 
 # GitOps Workflow
-
-Developer
-↓
-Push code
-↓
-GitHub
-↓
-Container Image built
-↓
-GHCR
-↓
-Update Helm values
-↓
-Git Commit
-↓
-ArgoCD detects change
-↓
-Deploy automatically (Unless a sync window is in place)
-↓
-Kubernetes
-
+```
+Developer -> Push code -> GitHub -> Container Image built -> GHCR -> Update Helm values -> Git Commit -> ArgoCD detects change -> Deploy automatically (Unless a sync window is in place) -> Kubernetes
+```
 ---
 
 # Security Review
@@ -220,44 +202,39 @@ During implementation several security issues were identified and corrected.
 
 ---
 
-## 1. ECR - 
+## 1. ECR
 
 ### Issue
-
+```
 Mutable tags.
-
+```
 ### Risk
-
 ```
 Images can be overwritten
 ```
-
 ### Resolution
-
+```
 Make tags immutable
-
+```
 ---
 
 ## 2. S3
 
 ### Issue(s)
-
+```
 - Public Access Block disabled
 - Public bucket policy
 - No encryption
 - No versioning
-
+```
 ### Risk
-
 ```
 - Bucket can become public
 - Anyone on the Internet can read objects
 - Data at rest not encrypted
 - Accidental deletion/data loss
 ```
-
 ### Resolution
-
 ```
 - Enable all public access blocks
 - Remove public policy
@@ -270,23 +247,20 @@ Make tags immutable
 ## 3. IAM
 
 ### Issue(s)
-
+```
 - Long-lived IAM user
 - Access key
 - Action="*"
 - Resource="*"
-
+```
 ### Risk
-
 ```
 - Static credentials
 - Permanent credentials
 - Full administrator access
 - Access to everything
 ```
-
 ### Resolution
-
 ```
 - Prefer IAM Roles/OIDC
 - Avoid where possible
@@ -301,11 +275,12 @@ Make tags immutable
 Infrastructure changes occur only through Git.
 
 Benefits
-
+```
 - audit trail
 - rollback capability
 - version control
 - reproducible deployments
+```
 
 ---
 
@@ -314,10 +289,11 @@ Benefits
 Private container images are stored inside GitHub Container Registry.
 
 Benefits
-
+```
 - authenticated image pulls
 - centralized image management
 - versioned deployments
+```
 
 ---
 
@@ -328,19 +304,17 @@ Enabled
 ```
 selfHeal
 ```
-
 and
-
 ```
 prune
 ```
 
 Advantages
-
+```
 - automatic drift correction
 - orphaned resources removed
 - desired state continuously enforced
-
+```
 ---
 
 ## 7. HTTPS Ingress
@@ -348,24 +322,28 @@ Advantages
 Applications are exposed through a single ingress controller.
 
 Advantages
-
+```
 - central entry point
 - TLS support
 - easier certificate management
 - simplified routing
-
+```
 ---
 
 # Challenges Encountered
 
 ### Issue
+```
 No tagging
-
+```
 ### Risk
+```
 Poor governance
-
+```
 ### Resolution
+```
 Add standard tags
+```
 
 ## CRD Timing
 
@@ -380,48 +358,48 @@ Resolved by waiting for ArgoCD installation before applying the Root Application
 If this platform were extended further, the following enhancements would be recommended.
 
 ## Security
-
+```
 - External Secrets Operator
 - AWS Secrets Manager
 - Sealed Secrets
 - SOPS encryption
-
+```
 ---
 
 ## Supply Chain Security
-
+```
 - Cosign image signing
 - SBOM generation
 - Trivy image scanning
 - Admission Controller policy enforcement
-
+```
 ---
 
 ## Kubernetes Security
-
+```
 - Kyverno
 - OPA Gatekeeper
 - Pod Security Standards
 - Network Policies
-
+```
 ---
 
 ## CI/CD
-
+```
 - GitHub Actions
 - Automated semantic versioning
 - Progressive deployments
 - Canary releases
-
+```
 ---
 
 ## Observability
-
+```
 - Loki
 - Tempo
 - OpenTelemetry
 - Alertmanager integrations
-
+```
 ---
 
 # Result
@@ -442,6 +420,12 @@ The resulting environment is fully reproducible, declarative, and managed throug
 ---
 
 # Admin Notes
+
+Github Code:
+https://github.com/infrabyte/capitec
+
+Image:
+https://github.com/users/infrabyte/packages/container/package/capitec
 
 Retrieve ArgoCD password with:
 ```
