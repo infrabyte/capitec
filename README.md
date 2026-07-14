@@ -480,6 +480,7 @@ aws secretsmanager delete-secret \
   --secret-id devops-cyber-assessment-ci-credentials \
 >   --force-delete-without-recovery \
   --region af-south-1
+```
 
 Github Code:
 https://github.com/infrabyte/capitec

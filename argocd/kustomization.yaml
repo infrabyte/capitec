@@ -6,5 +6,6 @@ resources:
   - monitoring.yaml
   - postgresql.yaml
   - capitec.yaml
+  - capitec-ingress.yaml
   - argocd-ingress.yaml
   
