@@ -466,6 +466,12 @@ https://github.com/infrabyte/capitec
 Image:
 https://github.com/users/infrabyte/packages/container/package/capitec
 
+Add cluster to kube config:
+```
+aws eks update-kubeconfig \
+  --region af-south-1 \
+  --name <cluster-name>
+```
 Retrieve ArgoCD password with:
 ```
 kubectl -n argocd get secret argocd-initial-admin-secret \
