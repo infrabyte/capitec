@@ -1,12 +1,12 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: ghcr-secret
-  namespace: capitec
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJnaGNyLmlvIjogewogICAgICAidXNlcm5hbWUiOiAiaW5mcmFieXRlIiwKICAgICAgInBhc3N3b3JkIjogImdocF9ZVXI5c3ZReThFb0RQY3hpcjdjaUdUaGJZeHhWaGc0OHF2a2QiLAogICAgICAiYXV0aCI6ICJhVzVtY21GaWVYUmxPanhaVDFWU1gwZEpWRWhWUWw5UVFWUSsiCiAgICB9CiAgfQp9Cg==
----
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: ghcr-secret
+#   namespace: capitec
+# type: kubernetes.io/dockerconfigjson
+# data:
+#   .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJnaGNyLmlvIjogewogICAgICAidXNlcm5hbWUiOiAiaW5mcmFieXRlIiwKICAgICAgInBhc3N3b3JkIjogImdocF9ZVXI5c3ZReThFb0RQY3hpcjdjaUdUaGJZeHhWaGc0OHF2a2QiLAogICAgICAiYXV0aCI6ICJhVzVtY21GaWVYUmxPanhaVDFWU1gwZEpWRWhWUWw5UVFWUSsiCiAgICB9CiAgfQp9Cg==
+# ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 

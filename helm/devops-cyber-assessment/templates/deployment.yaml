@@ -12,8 +12,8 @@ spec:
       labels:
         app: devops-cyber-assessment
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
+      # imagePullSecrets:
+      #   - name: ghcr-secret
       containers:
         - name: devops-cyber-assessment
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
