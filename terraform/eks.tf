@@ -57,9 +57,9 @@ module "eks" {
     default = {
       instance_types = ["t3.small"]
 
-      desired_size = 2
+      desired_size = 3
       min_size     = 2
-      max_size     = 2
+      max_size     = 3
 
       disk_size = 30
 

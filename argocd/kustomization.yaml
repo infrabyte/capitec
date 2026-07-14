@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ingress-nginx.yaml
   - monitoring.yaml
+  - monitoring-ingress.yaml
   - postgresql.yaml
   - capitec.yaml
   - capitec-ingress.yaml
