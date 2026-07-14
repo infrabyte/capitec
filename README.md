@@ -460,6 +460,27 @@ terraform plan
 terraform apply
 ```
 
+If you find errors:
+eg:
+Error: creating Secrets Manager Secret
+```
+If you destroyed the cluster but not the secret, you'll see something like this.
+Check if it exists:
+aws secretsmanager list-secrets \
+  --region af-south-1
+
+or
+
+aws secretsmanager describe-secret \
+  --secret-id devops-cyber-assessment-ci-credentials \
+> --region af-south-1
+
+Then remove it and contine:
+aws secretsmanager delete-secret \
+  --secret-id devops-cyber-assessment-ci-credentials \
+>   --force-delete-without-recovery \
+  --region af-south-1
+
 Github Code:
 https://github.com/infrabyte/capitec
 
