@@ -9,7 +9,7 @@ service:
   port: 5000
 
 env:
-  DB_HOST: postgresql
+  DB_HOST: postgresql.database.svc.cluster.local
   DB_PORT: "5432"
   DB_NAME: devops-cyber-assessment
   DB_USER: postgres
